@@ -100,3 +100,5 @@ covid_state_current
 ## Workbook complete
 
 You're finished this workbook, but not this week's lab.  Save your changes, and go back to the webpage for the lab for next steps.
+
+I'm done!
