@@ -78,6 +78,7 @@ Once a package is installed, you have to load it.  Using the library() function 
 # Load the tidyverse suite of packages
 library(tidyverse)
 ```
+# Successfully loaded for me
 
 We can see that it's installed by looking for a check mark next to "tidyverse" in the packages window.  The packages that load as part of the tidyverse also have check marks. 
 
