@@ -1,5 +1,5 @@
 ---
-title: "JOUR472/772 in_class_03 | heat analysis, grouping and summarizing"
+title: "JOUR472/772 in_class_04 | heat analysis, grouping and summarizing"
 author: "Sean Mussenden"
 date: "9/22/2020"
 output: 
@@ -84,7 +84,8 @@ stephanie_day_hourly_averages <- read_csv("data/temperature_sensors/stephanie/st
 **Task (Write and Run Code)**: Write code necessary to load Michael values as a new ojbject called michael_day_hourly_averages
 
 ```{r}
-
+michael_day_hourly_averages <-
+read_csv("data/temperature_sensors/michael/michael_day_hourly_averages.csv")
 ```
 
 ## Examine data 
@@ -94,7 +95,7 @@ Now, follow the standard steps to examine the data you loaded.
 **Task (Write and Run Code)**: run the code below to glimpse() the stephanie dataframe.
 
 ```{r}
-
+glimpse(stephanie_day_hourly_averages)
 ```
 
 **Task (Create a New Codeblock, Write Code and Run It)**: create a new codeblock and write the necessary code to display the stephanie dataframe in the markdown document below the codeblock. 
@@ -158,7 +159,7 @@ stephanie_daily_count
 
 # Write the answer in a comment
 # Q: How many hourly readings do we have on each day in Stephanie's house?
-# A: 
+# A: 24
 ```
 Here's a slightly more complicated way of answering that exact same question.  I'm showing you this method, because it will set us up for the future. 
 
@@ -178,7 +179,7 @@ stephanie_daily_count
 
 # Write the answer in a comment
 # Q: How many hourly readings do we have on each day in Stephanie's house?
-# A: 
+# A: 24
 ```
 
 ## Grouping and Summarizing | Calculating Averages
@@ -200,7 +201,7 @@ stephanie_daily_average
 
 # Write the answer in a comment
 # Q: What is the average heat index value on each day inside of Stephanie's house? Which day had the highest?
-# A: 
+# A: 7/16 - 94.8; 7/17 - 97.5; 7/18 - 97.7; 7/19 - 100.95; 7/20 - 101.1 (*HIGHEST); 7/21 - 98.25; 7/22 - 96.7
 
 
 ```
@@ -227,7 +228,7 @@ stephanie_daily_min_max
 
 # Write the answer in a comment
 # Q: During the seven day heat wave, what was the lowest recorded heat index value in Stephanie's house?  What was the highest heat index value, and on what day did it occur?
-# A: 
+# A: Lowest - 88.8 (7/16); Highest - 115.7 (7/19)
 
 
 ```
@@ -254,6 +255,19 @@ That should allow you to answer the following questions:
 * Q: The heat index never fell below what value during the period we measured? 
 * Q: What was the average heat index value on each day during the period measured? 
 * Q: Is there anything concerning the number of hourly readings on each day that could affect the results you're getting?
+
+``` {r}
+michael_daily_table <- stephanie_day_hourly_averages %>%
+  group_by(date) %>%
+  summarize(heat_index_max = max(mean_indoor_heat_index),
+            heat_index_min = min(mean_indoor_heat_index)
+            average_heat_index =
+    mean(mean_indoor_heat_index))
+    count = n()
+
+
+
+```
   
 -30-
 
