@@ -260,10 +260,9 @@ That should allow you to answer the following questions:
 michael_daily_table <- stephanie_day_hourly_averages %>%
   group_by(date) %>%
   summarize(heat_index_max = max(mean_indoor_heat_index),
-            heat_index_min = min(mean_indoor_heat_index)
-            average_heat_index =
-    mean(mean_indoor_heat_index))
-    count = n()
+            heat_index_min = min(mean_indoor_heat_index),
+            average_heat_index =   mean(mean_indoor_heat_index),
+    count = n()) %>%
 
 
 
