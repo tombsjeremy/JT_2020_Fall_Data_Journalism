@@ -126,7 +126,7 @@ least_covid_cases_state
 
 # Write the answer in a comment
 # Q: Which state had the fewest total covid cases on August 30? How many cases?
-# A: 
+# A: Vermont; 1,608
 ```
 
 Q: Which state had the fewest total covid cases on August 30?
@@ -147,7 +147,7 @@ most_covid_cases_state
 
 # Write the answer in a comment
 # Q: Which state had the most total covid cases on August 30? How many cases?
-# A: 
+# A: California; 706,589
 ```
 
 ## Grouping and Summarizing | Calculating averages
@@ -174,7 +174,7 @@ averages_county_cases_by_state
 
 # Write the answer in a comment
 # Q: Which state has the most counties in our data? How many?
-# A: 
+# A: District of Columbia; 13,959 per county (ward?)
 ```
 
 ## Grouping and Summarizing | Counting
@@ -209,7 +209,7 @@ most_counties_state
 
 # Write the answer in a comment
 # Q: Which state has the most counties in our data? How many?
-# A: 
+# A: Texas; 251
 ```
 
 ## Grouping and Summarizing | Calculating Min and Max
@@ -240,7 +240,7 @@ min_max_state
 
 # Write the answer in a comment
 # Q: Which state had the single county with the largest case count?  
-# A: 
+# A: California; 240,749
 
 
 ```
@@ -261,6 +261,46 @@ It's okay if you don't get through all of them, just get through as many as you 
 * Q: Which state had the lowest average number of deaths per county? What was that number? 
 
 If you finish all of those, create your own questions and answer them! 
+
+```{r}
+# Q: Which state had the highest total number of deaths? 
+most_deaths_state <- covid_county %>%
+  group_by(state)%>%
+  summarise(total_deaths = sum(deaths))%>%
+  arrange(desc(total_deaths))
+
+# A: New York
+```
+
+```{r}
+# Q: Which state had the lowest total number of deaths?
+least_deaths_state <- covid_county %>%
+  group_by(state)%>%
+  summarise(total_deaths = sum(deaths))%>%
+  arrange(total_deaths)
+
+# A: Alaska
+```
+
+```{r}
+# Q: Which state had the highest average number of deaths per county? What was that number? 
+averages_county_deaths_by_state <- covid_county %>%
+  group_by(state) %>%
+  summarise(average_county_deaths = mean(deaths)) %>%
+  arrange(desc(average_county_deaths))
+
+# A: New Jersey; 758.9 per county
+```
+
+```{r}
+# Q: Which state had the lowest average number of deaths per county? What was that number?
+averages_county_deaths_by_state <- covid_county %>%
+  group_by(state) %>%
+  summarise(average_county_deaths = mean(deaths)) %>%
+  arrange(average_county_deaths)
+
+# A: Alaska; 1.307 per county
+```
 
 -30-
 
