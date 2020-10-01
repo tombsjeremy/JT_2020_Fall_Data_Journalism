@@ -269,6 +269,8 @@ most_deaths_state <- covid_county %>%
   summarise(total_deaths = sum(deaths))%>%
   arrange(desc(total_deaths))
 
+most_deaths_state
+
 # A: New York
 ```
 
