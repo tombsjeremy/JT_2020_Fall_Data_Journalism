@@ -85,7 +85,7 @@ Our second data set comes from the census, and it has population for each county
 county_pills_per_year <- read_csv("data/county_pills_per_year.csv")
 
 # Edit the line below to load county population data. Something is missing inside of the read_csv() function. The file is called "county_population_per_year.csv" and it's in the data folder. 
-county_population <- read_csv() 
+county_population <- read_csv("data/county_population_per_year.csv") 
 
 ```
 
@@ -95,9 +95,9 @@ county_population <- read_csv()
 
 ```{r}
 # glimpse county pills data
-glimpse()
+glimpse(county_pills_per_year)
 # glimpse county population data
-glimpse()
+glimpse(county_population)
 
 ```
 
@@ -155,10 +155,11 @@ If you get stuck, look back at this week's in class class assignment for a clue.
 
 most_pills_per_person <- county_pills_population %>%
   # add a line here to create a new column with pills per person AND THEN
+  mutate(pills_per_person = (average_pills_per_year/population))%>%
   # add a line here to sort the new column from highest to lowest 
+  arrange(desc(pills_per_person))
 
-
-# Put the answer here
+# Norton City, VA with 305.7 pills per person
 ```
 
 ## Different types of joins
