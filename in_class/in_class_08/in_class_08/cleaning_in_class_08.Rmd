@@ -24,6 +24,11 @@ This notebook is designed as an in-class introduction to concepts we'll delve de
 There is one package to install for this assignment:
 * [Janitor](https://github.com/sfirke/janitor)
 
+```{r}
+install.packages("janitor")
+
+```
+
 ## Load packages
   
 Today, we're going to load one package:
@@ -137,7 +142,7 @@ Q: How many deaths are there in the county with FIPS code 24003 -- Anne Arundel?
 county_covid_deaths %>%
   filter(fips_code == 24003)
 
-# A: 
+# A: 236
 ```
 
 ### Fix multiple values in state column
