@@ -1,0 +1,101 @@
+---
+title: "Group_5_Analysis"
+output: html_document
+---
+
+#Load Libraries
+```{r}
+#install.packages(sf)
+
+library(tidyverse)
+library(lubridate)
+library(sf)
+options(scipen = 999)
+
+```
+
+#Load Data
+```{r}
+# Street Racing Fatality Data from 2000 to 2017
+
+streetracing <- read_csv("Data/street-racing-fatalities.csv")
+
+# More fatality data
+
+fatalities_by_region <- read_csv("Data/fatalities.csv")
+
+# More
+
+citypop <- st_read("")
+
+```
+
+#Sentence 1: [Valentina D’Alessandro] was one of at least 179 people who have died in Los Angeles County since 2000 in accidents where street racing was suspected, according to a Los Angeles Times analysis of coroner’s records, police reports and media accounts from 2000 to 2017.
+
+
+#Sentence 2: The deadliest year on record was 2007, with 18 fatal crashes. After a period with relatively few recorded deaths, the count grew in recent years, with 15 fatalities in 2015, 11 in 2016 and 12 deaths in 2017, the Times analysis shows.
+
+```{r}
+deaths_by_year <- streetracing%>%
+  mutate(year = year(DeathDateTime))%>%
+  select(year, everything())
+ 
+deaths_by_year
+
+```
+
+```{r}
+none <- streetracing %>%
+  anti_join(fatalities_by_region,by = c("CaseNum"="case_number") )
+
+none
+
+```
+
+#Sentence 3: The dead were overwhelmingly male and young: More than half were 21 or younger, including two children, ages 4 and 8, killed along with their mother. Slightly less than half of the victims— 47% — were behind the wheel. The rest were either passengers in the speeding vehicles, spectators or people simply walking on a sidewalk or driving home.
+
+
+# Sentence 4: Deaths have occurred all across L.A. County, with the biggest concentration in the small city of Commerce. Eleven have died on the small, industrial city’s streets since 2000.
+
+```{r}
+#Selecting columns to make data concise.
+
+fatalities_truncated<-fatalities_by_region%>%
+  select(name, city, death_datetime, death_year)
+
+#glimpse findings below
+glimpse(fatalities_truncated)
+```
+
+```{r}
+#Filtering to find deaths in Commerce City.
+
+commerce_city_deaths <- fatalities_truncated%>%
+  filter(name == "Commerce")
+
+#show findings below
+commerce_city_deaths
+
+#Q: How many deaths occurred in Commerce City since 2000?
+#A: 11
+```
+
+```{r}
+death_by_city <- fatalities_truncated%>%
+  group_by(name)%>%
+  summarise(city_deaths = n())%>%
+  arrange(desc(city_deaths))
+
+death_by_city
+
+```
+
+```{r}
+death_by_city_pop <- death_by_city %>%
+  inner_join(citypop) %>%
+  mutate(deaths_per_capita = (city_deaths/population*10000)) %>%
+  filter(population > 1000) %>%
+  arrange(desc(deaths_per_capita))
+
+death_by_city_pop
+
