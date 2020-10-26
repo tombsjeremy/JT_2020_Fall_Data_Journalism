@@ -99,6 +99,8 @@ opioid_scrape
 
 # What flaws did you see?
 
+#Two columns are entirely empty, several values in the 100,000 deaths per column are missing as well, and the names for columns 2 and 3 make it difficult to interpret the data. It's hard to tell what the findings and the functions will be made difficult because of the names.
+
 ```
 
 Now, I'll walk you through what I saw.  
@@ -172,8 +174,8 @@ Now, it's your turn to use rename() to fix the opioid prescription rate column, 
 ```{r}
 opioid_scrape_clean <- opioid_scrape %>%
   clean_names() %>%
-  rename(opioid_death_rate = opioid_involved_overdose_deaths_100_000_persons1_2018) 
-  # Add an additional rename() function here as instructed
+  rename(opioid_death_rate = opioid_involved_overdose_deaths_100_000_persons1_2018)%>%
+  rename(opioid_prescription_rate = opioid_prescriptions_100_persons2_2018)
 
 opioid_scrape_clean
 
@@ -346,8 +348,9 @@ opioid_scrape_clean <- opioid_scrape %>%
   remove_empty() %>%
   filter(state != "*Not included - Did not meet inclusion criteria") %>%
   mutate(opioid_death_rate = na_if(opioid_death_rate,"*")) %>%
-  mutate(opioid_prescription_rate = as.numeric(opioid_prescription_rate)) 
-  # Add an additional function here as instructed
+  mutate(opioid_prescription_rate = as.numeric(opioid_prescription_rate))%>%
+  mutate(opioid_death_rate = as.numeric(opioid_death_rate))
+  
 
 
 opioid_scrape_clean
