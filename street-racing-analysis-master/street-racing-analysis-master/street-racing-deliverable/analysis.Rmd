@@ -1,0 +1,243 @@
+---
+title: "car race deaths data"
+author: "YOUR NAMES, NAMES, NAMES" 
+date: "10/20/2020"
+output: 
+  html_document:
+    code_folding: hide
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    df_print: paged
+  md_document:
+    variant: markdown_github
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Just write a paragraph where you explain the purpose of this document. REVERSE ENGINEER THE STORY. [Out of control](https://www.latimes.com/projects/la-me-street-racing/).
+
+## Load libraries and options
+
+```{r}
+# Get rid of scientific notation
+options(scipen = 999)
+
+# install.packages("sf")
+
+# For cleaning data
+library(janitor)
+#
+library(tidyverse)
+library(sf)
+library(lubridate)
+
+```
+
+## Load and clean data
+
+DESCRIPTION OF WHAT THE DATA IS, WHERE YOU GOT IT, LINK IT, WHAT IT INCLUDES, INCLUDING A LIST OF WHAT EACH FIELD IS. 
+
+* age | number | age of driver
+
+```{r}
+# Comment on what you're loading
+streetracing <-read_csv("data/street-racing-fatalities.csv")
+
+# Comment on what you're loading
+fatalities <-read_csv("data/fatalities.csv")
+
+# Comment on what you're loading
+# Special form of geographic data called .shp
+citypop <- st_read("data/hoods.shp")%>%
+  as_tibble() %>%
+  select(-geometry)
+
+```
+
+## Analysis
+
+### Sentence 1
+
+Deaths have occurred all across L.A. County, with the biggest concentration in the small city of Commerce. Eleven have died on the small, industrial city’s streets since 2000.
+
+```{r}
+# Comment explaining what is happening in a given codeblock
+fatalities_truncated <- fatalities%>%
+  select(name, city, death_datetime, death_year)
+
+fatalities_truncated
+```
+
+```{r}
+# Comment explaining what is happening in a given codeblock
+commerce_deaths <-fatalities_truncated%>%
+  filter(name == "Commerce", death_year >= "2000")
+
+commerce_deaths
+
+```
+
+
+
+```{r}
+# Comment explaining what is happening in a given codeblock
+death_by_city <- fatalities_truncated%>%
+  group_by(name)%>%
+  summarise(city_deaths = n())%>%
+  arrange(desc(city_deaths))
+
+death_by_city
+```
+
+```{r}
+# This code joins the citypop table we created with the death by city frame and then creates a new column dividing the number of deaths per city by the population (multiplying by 10,000) and then filters out any cities with populations less than a thousand, generating the 4th finding: Deaths have occurred all across L.A. County, with the biggest concentration in the small city of Commerce. Eleven have died on the small, industrial city’s streets since 2000.
+
+death_by_city_pop <- death_by_city%>%
+ inner_join(citypop)%>%
+  mutate(deaths_per_capita = (city_deaths/population*10000))%>%
+  filter(population > 1000)%>%
+  arrange(desc(deaths_per_capita))
+
+
+death_by_city_pop
+
+```
+### Sentence 2
+
+The deadliest year on record was 2007, with 18 fatal crashes. After a period with relatively few recorded deaths, the count grew in recent years, with 15 fatalities in 2015, 11 in 2016 and 12 deaths in 2017, the Times analysis shows.
+
+```{r}
+deaths_by_year <- streetracing%>%
+  clean_names()%>%
+  mutate(year = year(death_date_time))%>%
+  select(year, case_num, name_first, name_last, victim_role)
+ 
+deaths_by_year
+
+
+```
+```{r}
+
+# This codeblock reverse-engineers a portion of the following finding: "The deadliest year on record was 2007, with 18 fatal crashes. After a period with relatively few recorded deaths, the count grew in recent years, with 15 fatalities in 2015, 11 in 2016 and 12 deaths in 2017, the Times analysis shows.
+
+#This codeblock shows that "the deadliest year on record was 2007, with 18 fatal crashes" by: creating a new object called deaths_grouped and then groups the deaths_by_year table by year, and then counts the number of deaths in each year, and then arranges the total_deaths column from highest to lowest. 
+deaths_grouped<- deaths_by_year%>%
+  group_by(year)%>%
+  summarise(total_deaths = n())%>%
+  arrange(desc(total_deaths))
+
+deaths_grouped
+
+```
+
+```{r}
+
+# This codeblock reverse-engineers a portion of the following finding: "The deadliest year on record was 2007, with 18 fatal crashes. After a period with relatively few recorded deaths, the count grew in recent years, with 15 fatalities in 2015, 11 in 2016 and 12 deaths in 2017, the Times analysis shows.
+
+#This codeblock shows that "after a period with relatively few recorded deaths, the count grew in recent years, with 15 fatalitiesin 2015, 11 in 2016 and 12 deaths in 2017," by: creating a new object called deaths_grouped_again and then grouping the deaths_by_year table by year, and then counting the number of deaths in each year, and displaying a table that shows that from 2009-2013, streetracing deaths were in the single digits until 2014, when they hit 11 and then 2015, with 15 deaths. 
+
+deaths_grouped_again<- deaths_by_year%>%
+  group_by(year)%>%
+  summarise(total_deaths = n())
+
+deaths_grouped_again
+```
+### Sentence 3
+
+The dead were overwhelmingly male and young: More than half were 21 or younger, including two children, ages 4 and 8, killed along with their mother. Slightly less than half of the victims— 47% — were behind the wheel. The rest were either passengers in the speeding vehicles, spectators or people simply walking on a sidewalk or driving home.
+
+```{r}
+deaths_by_year_expanded <- streetracing%>%
+  clean_names()%>%
+  mutate(year = year(death_date_time))%>%
+  select(year, gender, age, case_num, name_first, name_last, victim_role)
+  
+deaths_by_year_expanded
+```
+```{r}
+
+#this codeblock reproduces the finding that 47% of the victims were behind the wheel by grouping the victims by their role and then summarising the number of victims in each role - 85 of the 179 total victims were suspected racers (behind the wheel), which comes out to 47.4%, or 47% rounded.
+
+#Creates a new object called behind_wheel 
+## AND THEN groups by the victim's role in the car accident 
+## AND THEN summarizes the number of deaths 
+## AND THEN mutates the victim's class depending on whether the victim's role was that of a suspected racer or not.
+## AND THEN groups by the victim's class
+## AND THEN summarizes the deaths by the sum of deaths
+## AND THEN rearranges the table's appearance by pivoting wider
+## AND THEN mutates total deaths to equal the sum of suspected racers and not suspected racers
+## AND THEN mutates the percentage of suspected racers to equal suspected racers divided by (total deaths multiplied by 100)
+
+behind_wheel <- deaths_by_year_expanded%>%
+  group_by(victim_role) %>%
+  summarise(deaths = n()) %>%
+  mutate(victim_class = case_when(
+    victim_role == "Suspected Racer" ~ "suspected_racer",
+    TRUE ~ "not_suspected_racer"
+  )) %>%
+  group_by(victim_class) %>%
+  summarise(deaths = sum(deaths)) %>%
+  pivot_wider(names_from = victim_class, values_from = deaths) %>%
+  mutate(total_deaths = not_suspected_racer+suspected_racer) %>%
+  mutate(pct_suspected_racer = suspected_racer/total_deaths*100)
+
+#
+behind_wheel
+```
+```{r}
+male_and_young <- deaths_by_year_expanded %>%
+  mutate(age_group = case_when(
+    age <= 27 ~ "young",
+    TRUE ~ "old"
+  )) %>%
+  group_by(gender, age_group) %>%
+  count() %>%
+  arrange(desc(n))
+  
+male_and_young
+```
+```{r}
+male_and_young <- deaths_by_year_expanded %>%
+  mutate(age_group = case_when(
+    age <= 21 ~ "young",
+    TRUE ~ "old"
+  )) %>%
+  group_by(gender, age_group) %>%
+  count() %>%
+  arrange(desc(n))
+  
+male_and_young
+
+ 
+```
+
+```{r}
+
+streetracing %>%
+  clean_names() %>%
+  arrange(age) 
+
+streetracing %>%
+  clean_names() %>%
+  filter(death_date_time == "2007-10-08 17:50:00")
+
+
+
+four_year_old <- streetracing %>%
+  clean_names() %>%
+  filter(age == 4) %>%
+  select(death_date_time)
+
+tragic_accident <- streetracing %>%
+  clean_names() %>%
+  inner_join(four_year_old)
+  
+```
+

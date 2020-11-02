@@ -58,12 +58,12 @@ none
 # Sentence 4: Deaths have occurred all across L.A. County, with the biggest concentration in the small city of Commerce. Eleven have died on the small, industrial city’s streets since 2000.
 
 ```{r}
-#Selecting columns to make data concise.
+#Selecting columns and renaming to fatalities_truncated to make data concise.
 
 fatalities_truncated<-fatalities_by_region%>%
   select(name, city, death_datetime, death_year)
 
-#glimpse findings below
+#Glimpse findings below.
 glimpse(fatalities_truncated)
 ```
 
