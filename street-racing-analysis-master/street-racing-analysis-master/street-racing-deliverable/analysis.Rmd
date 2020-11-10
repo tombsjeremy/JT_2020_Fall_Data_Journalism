@@ -156,6 +156,7 @@ deaths_grouped_again<- deaths_by_year%>%
 # Displays a table that shows that from 2009-2013, streetracing deaths were in the single digits until 2014, when they hit 11 and then 2015, with 15 deaths. 
 deaths_grouped_again
 ```
+
 ### Sentence 3
 
 The dead were overwhelmingly male and young: More than half were 21 or younger, including two children, ages 4 and 8, killed along with their mother. Slightly less than half of the victims— 47% — were behind the wheel. The rest were either passengers in the speeding vehicles, spectators or people simply walking on a sidewalk or driving home.
@@ -173,6 +174,7 @@ deaths_by_year_expanded <- streetracing%>%
 # Displays new object below
 deaths_by_year_expanded
 ```
+
 ```{r}
 # This codeblock reproduces the finding that 47% of the victims were behind the wheel by grouping the victims by their role and then summarising the number of victims in each role - 85 of the 179 total victims were suspected racers (behind the wheel), which comes out to 47.4%, or 47% rounded. 
 # Creates a new object called behind_wheel 
@@ -272,6 +274,7 @@ tragic_accident <- streetracing %>%
   inner_join(four_year_old)
   
 ```
+
 ### Sentence 1 
 
 [Valentina D’Alessandro] was one of at least 179 people who have died in Los Angeles County since 2000 in accidents where street racing was suspected, according to a Los Angeles Times analysis of coroner’s records, police reports and media accounts from 2000 to 2017
