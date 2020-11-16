@@ -84,11 +84,6 @@ Let's glimpse our data to get a sense of it, and display it in the markdown docu
 # glimpse the data
 glimpse(maryland)
 
-# view it
-maryland
-
-
-
 ```
 
 ## Filter data 
@@ -219,7 +214,7 @@ anne_arundel %>%
     title="In Anne Arundel, steady increase in COVID cases",
     caption="Source: Analysis of New York Times COVID data"
   ) +
-  geom_text(aes(label=round(case_rate,0)))
+  geom_text(aes(label=round(case_rate,2)))
 
 ``` 
 
@@ -246,6 +241,30 @@ Create a code block below, and create a bar chart showing the increase in case r
 **Task (Create a Codeblock, Write and Run Code):** Create the chart below. 
 
 ```{r}
+baltimore_city <- maryland %>%
+  filter(county=="Baltimore city")
+  
+baltimore_city_may_august <- baltimore_city %>%
+  filter(month != "March", month != "April")
+
+```
+
+```{r}
+
+#My coordinates on the x axis were going from August to May (left to right, so it was descending) and I could not figure out how to rearrange them. As such, the "coord_flip" and "xlab" lines were functions I found online and provided a solution to the issue. Hopefully this is okay. 
+
+baltimore_city_may_august %>%
+  ggplot(aes(month, case_rate)) +
+  geom_bar(stat="identity", fill="green") +
+    coord_flip() +
+    xlab("") +
+  labs(
+    x="Month",
+    y="Cases per 1,000 people",
+    title="In Baltimore city, steady increase in COVID cases",
+    caption="Source: Analysis of New York Times COVID data"
+  ) +
+  geom_text(aes(label=round(case_rate,2)))
 
 ```
 
