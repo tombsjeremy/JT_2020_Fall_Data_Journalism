@@ -72,7 +72,10 @@ Each row is a county in Maryland. The columns are as follows:
 **Task (Run Code)**: run the code below to load data.
 
 ```{r}
-maryland <- read_csv("data/maryland_county_monthly_case_rate.csv") 
+maryland <- read_csv("data/maryland_county_monthly_case_rate.csv") %>%
+
+mutate(month = as_factor(month))%>%
+mutate(month = ordered(month, levels = c("March","April","May","June","July","August")))
 ```
 
 ## Examine data
