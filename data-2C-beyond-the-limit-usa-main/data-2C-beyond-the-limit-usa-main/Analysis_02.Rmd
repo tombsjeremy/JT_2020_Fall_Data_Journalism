@@ -17,12 +17,17 @@ knitr::opts_chunk$set(echo = TRUE)
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+install.packages('naniar')
+
+```
 
 ```{r}
 library(tidyverse)
 library(vembedr)
 library(lubridate)
 library(janitor)
+library(naniar)
 ```
 
 ##Background: Why we selected North Dakota
@@ -34,7 +39,7 @@ county_year <- read.csv("https://raw.githubusercontent.com/washingtonpost/data-2
 state_year <- read.csv("https://raw.githubusercontent.com/washingtonpost/data-2C-beyond-the-limit-usa/main/data/processed/climdiv_state_year.csv")
 model_county <- read.csv("https://raw.githubusercontent.com/washingtonpost/data-2C-beyond-the-limit-usa/main/data/processed/model_county.csv")
 model_state <- read.csv("https://raw.githubusercontent.com/washingtonpost/data-2C-beyond-the-limit-usa/main/data/processed/model_state.csv")
-drought_data <- read_csv("data/north_dakota_drought_severity_data.csv")
+drought_data <- read_csv("data/processed/north_dakota_drought_severity_data.csv")
 options(scipen=999)
 ```
 
@@ -213,6 +218,68 @@ tribal_join_county_ND <- tribal_county_ND  %>%
 
 ##Finding 4: 
 ```{r}
+# Read in and clean the crop data.
 
+# This data will help to show the impact of climate change on the harvesting seasons of individual crops. In this finding, we will be looking at the change in the harvesting seasons for corn that is harvested for grain only, not chopped for silage. 
+
+corn_harvest_grain <- read_csv("data/processed/corn_harvested_for_grain.csv") %>%
+clean_names() %>%
+  t() %>%
+  as.data.frame() %>%
+  row_to_names(row_number = 1) %>%
+  rownames_to_column(var = "date") %>%
+  mutate(date = str_remove(date,"x")) %>%
+  separate(date, into = "date",sep="_") %>%
+  mutate(id = row_number()) %>%
+  select(id, date, everything()) %>%
+  mutate(month = case_when(
+    id >= 1 & id <= 30 ~ "April",
+    id >= 31 & id <= 61 ~ "May",
+    id >= 62 & id <= 91 ~ "June",
+    id >= 92 & id <= 122 ~ "July",
+    id >= 123 & id <= 152 ~ "August",
+    id >= 153 & id <= 183 ~ "September",
+    id >= 184 & id <= 214 ~ "October",
+    id >= 215 & id <= 244 ~ "November",
+    id >= 245 & id <= 275 ~ "December"
+  )) %>%
+  select(id, month, date, everything()) %>%
+  clean_names() %>%
+  rename_all(funs(str_remove(.,"_0")%>%
+str_replace(.,"x","y"))) %>%
+  na_if("#VALUE!") %>%
+  na_if("#") %>%
+  mutate_at(vars(matches("y")), as.numeric) %>%
+  rename(y00 = y2000)
+
+
+
+```
+
+```{r}
+# Filter for key months and years in the corn harvest data to show when the seasons have started from 2015-2020 as compared to 1985-89.
+corn_harvest_filtered_start <- corn_harvest_grain %>%
+  select(month, date, y85, y86, y87, y88, y89, y15, y16, y17, y18, y19, y20, id) %>%
+  filter(month == "September") %>%
+  filter(id != "153")
+
+#This filtered data set shows that the start of the harvesting season for corn has remained largely unchanged from the 1980s to the present. It generally starts within the same 20-day window, between September 10 and September 30, each year.
+```
+
+```{r}
+# Filter for key months and years in the corn harvest data to show when the seasons have ended during the past 5 years (2015-2020) as compared to 1985-89.
+corn_harvest_filtered_end <- corn_harvest_grain %>%
+  select(month, date, y85, y86, y87, y88, y89, y15, y16, y17, y18, y19, y20, id) %>%
+  filter(id >= "215") %>%
+  filter(month != "April") %>%
+  filter(month != "May") %>%
+  filter(month != "June") %>%
+  filter(month != "July")
+
+#This filtered data set shows that despite the start of the harvesting seasons being the same over time, there has been significant change in when those seasons end from the 1980s to now. 
+
+#Each season in the data from the 80s had concluded or reached the 100 percent mark by November 12. From 2015 to 2020, no seasons had concluded by that point and only one harvesting season had reached the threshold of 95 percent.
+
+#The length of the modern harvesting season has extended by 10-25 days when compared to seasons from 30 years prior.
 
 ```
